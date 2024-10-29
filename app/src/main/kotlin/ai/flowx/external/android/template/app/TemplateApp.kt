@@ -4,6 +4,7 @@ import ai.flowx.android.sdk.FlowxSdkApi
 import ai.flowx.android.sdk.process.model.SdkConfig
 import ai.flowx.external.android.template.app.custom.CustomComponentsProviderImpl
 import android.app.Application
+import java.util.Locale
 
 class TemplateApp : Application() {
     override fun onCreate() {
@@ -18,6 +19,8 @@ class TemplateApp : Application() {
                 baseUrl = Env.baseUrl,
                 imageBaseUrl = Env.imageBaseUrl,
                 enginePath = Env.enginePath,
+                language = "en",
+                locale = Locale.getDefault(),
                 validators = mapOf("cnp" to { it.length == 13 }), // a simplified example for custom validator, named "cnp", which checks only the length of the given data
             ),
 //            accessTokenProvider = null, // null for now, we will set it later through the `FlowxSdkApi.getInstance().setAccessTokenProvider(...)` call
