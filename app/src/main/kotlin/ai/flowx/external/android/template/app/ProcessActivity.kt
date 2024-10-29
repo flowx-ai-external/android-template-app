@@ -24,6 +24,7 @@ class ProcessActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val applicationUuid = intent.getSerializableExtra(INTENT_EXTRA_APPLICATION_UUID) as? String // used to start a new process
         val processName = intent.getSerializableExtra(INTENT_EXTRA_PROCESS_NAME) as? String // used to start a new process
         val processUuid = intent.getSerializableExtra(INTENT_EXTRA_PROCESS_UUID) as? String // used to continue an existing process
         val accessToken = intent.getSerializableExtra(INTENT_EXTRA_ACCESS_TOKEN) as String
@@ -44,10 +45,14 @@ class ProcessActivity : ComponentActivity() {
         setContent {
             val showCloseModalProcessAlert = remember { mutableStateOf(false) }
             when {
-                !processName.isNullOrBlank() -> {
+                !applicationUuid.isNullOrBlank() && !processName.isNullOrBlank() -> {
                     FlowxSdkApi.getInstance().startProcess(
+                        applicationUuid = applicationUuid,
                         processName = processName,
                         isModal = true,
+                        onProcessEnded = {
+                            Log.i(ProcessActivity::javaClass.name, "Process $processName has ended")
+                        },
                         closeModalFunc = { processName ->
                             // NOTE: possible handling could involve doing something differently based on the `processName` value
                             showCloseModalProcessAlert.value = true
@@ -58,6 +63,9 @@ class ProcessActivity : ComponentActivity() {
                     FlowxSdkApi.getInstance().continueProcess(
                         processUuid = processUuid,
                         isModal = true,
+                        onProcessEnded = {
+                            Log.i(ProcessActivity::javaClass.name, "Process $processUuid has ended")
+                        },
                         closeModalFunc = { processName ->
                             // NOTE: possible handling could involve doing something differently based on the `processName` value
                             showCloseModalProcessAlert.value = true
@@ -100,6 +108,7 @@ class ProcessActivity : ComponentActivity() {
     }
 
     companion object {
+        const val INTENT_EXTRA_APPLICATION_UUID = "INTENT_EXTRA_APPLICATION_UUID"
         const val INTENT_EXTRA_PROCESS_NAME = "INTENT_EXTRA_PROCESS_NAME"
         const val INTENT_EXTRA_PROCESS_UUID = "INTENT_EXTRA_PROCESS_UUID"
         const val INTENT_EXTRA_ACCESS_TOKEN = "INTENT_EXTRA_ACCESS_TOKEN"

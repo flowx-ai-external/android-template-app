@@ -41,7 +41,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _error = MutableStateFlow("")
     val error = _error.asStateFlow()
 
-    private val _startProcess = Channel<Pair<String, String>?>()
+    private val _startProcess = Channel<Triple<String, String, String>?>()
     val startProcess = _startProcess.receiveAsFlow()
 
     private val _continueProcess = Channel<Pair<String, String>?>()
@@ -90,10 +90,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearError() { _error.update { _ -> "" } }
 
-    fun startProcess(processName: String = START_PROCESS_NAME) {
+    fun startProcess(applicationUuid: String = START_PROCESS_APPLICATION_UUID, processName: String = START_PROCESS_NAME) {
         storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)
             .takeUnless { it.isNullOrBlank() }
-            ?.let { accessToken -> _startProcess.trySend(processName to accessToken) }
+            ?.let { accessToken -> _startProcess.trySend(Triple(applicationUuid, processName, accessToken)) }
     }
 
     fun continueProcess(processUuid: String = CONTINUE_PROCESS_UUID) {
@@ -118,6 +118,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // TODO SETUP: configure your maven repository here by setting the appropriate values
     companion object {
+        const val START_PROCESS_APPLICATION_UUID = "your_application_uuid"
         const val START_PROCESS_NAME = "your_process_name"
         const val CONTINUE_PROCESS_UUID = "your_process_uuid"
     }
