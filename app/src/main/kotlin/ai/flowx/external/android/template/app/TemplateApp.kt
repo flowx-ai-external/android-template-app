@@ -4,6 +4,8 @@ import ai.flowx.android.sdk.FlowxSdkApi
 import ai.flowx.android.sdk.process.model.SdkConfig
 import ai.flowx.external.android.template.app.custom.CustomComponentsProviderImpl
 import android.app.Application
+import android.content.Intent
+import android.util.Log
 import java.util.Locale
 
 class TemplateApp : Application() {
@@ -26,6 +28,18 @@ class TemplateApp : Application() {
 //            accessTokenProvider = null, // null for now, we will set it later through the `FlowxSdkApi.getInstance().setAccessTokenProvider(...)` call
             customComponentsProvider = CustomComponentsProviderImpl(),
             customStepperHeaderProvider = null, // here: link your own implementation of `CustomStepperHeaderProvider` if needed
+            analyticsCollector = { event ->
+                // here: link your own implementation of `AnalyticsCollector` if needed
+                Log.i("Analytics", "Event(type = ${event.type}, value = ${event.value})")
+            },
+            onNewProcessStarted = { processInstanceUuid ->
+                applicationContext.sendBroadcast(
+                    Intent("ai.flowx.external.android.template.app.ProcessActivity.updateProcessData").apply {
+                        putExtra("processInstanceUuid", processInstanceUuid)
+                        setPackage("ai.flowx.external.android.template.app")
+                    }
+                )
+            },
         )
     }
 }

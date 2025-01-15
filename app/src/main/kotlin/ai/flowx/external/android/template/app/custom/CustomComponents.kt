@@ -83,6 +83,10 @@ class CustomComponentsProviderImpl : CustomComponentsProvider {
                     override fun populateUi(actions: Map<String, CustomComponentAction>) {
                         this.actions = actions
                     }
+
+                    override fun validate(): Boolean = true
+
+                    override fun saveData(): JSONObject? = null
                 }
         }
     }

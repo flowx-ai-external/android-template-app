@@ -75,7 +75,7 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
 
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:android-sdk:4.0.0")
+    implementation("ai.flowx.android:android-sdk:4.0.9")
 
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

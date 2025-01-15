@@ -90,10 +90,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearError() { _error.update { _ -> "" } }
 
-    fun startProcess(applicationUuid: String = START_PROCESS_APPLICATION_UUID, processName: String = START_PROCESS_NAME) {
+    fun startProcess(projectId: String = START_PROCESS_PROJECT_ID, processName: String = START_PROCESS_NAME) {
         storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)
             .takeUnless { it.isNullOrBlank() }
-            ?.let { accessToken -> _startProcess.trySend(Triple(applicationUuid, processName, accessToken)) }
+            ?.let { accessToken -> _startProcess.trySend(Triple(projectId, processName, accessToken)) }
     }
 
     fun continueProcess(processUuid: String = CONTINUE_PROCESS_UUID) {
@@ -118,7 +118,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // TODO SETUP: configure your maven repository here by setting the appropriate values
     companion object {
-        const val START_PROCESS_APPLICATION_UUID = "your_application_uuid"
+        const val START_PROCESS_PROJECT_ID = "your_project_id"
         const val START_PROCESS_NAME = "your_process_name"
         const val CONTINUE_PROCESS_UUID = "your_process_uuid"
     }
