@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                                 //   must be used only inside a container activity.
                                 Intent(context, ProcessActivity::class.java).apply {
                                     // start a new process
-                                    putExtra(ProcessActivity.INTENT_EXTRA_APPLICATION_UUID, it.first)
+                                    putExtra(ProcessActivity.INTENT_EXTRA_PROJECT_ID, it.first)
                                     putExtra(ProcessActivity.INTENT_EXTRA_PROCESS_NAME, it.second)
                                     putExtra(ProcessActivity.INTENT_EXTRA_ACCESS_TOKEN, it.third)
                                 }
