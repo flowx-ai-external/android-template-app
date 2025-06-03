@@ -1,6 +1,7 @@
 package ai.flowx.external.android.template.app
 
 import ai.flowx.android.sdk.FlowxSdkApi
+import ai.flowx.android.sdk.analytics.Event
 import ai.flowx.android.sdk.process.model.SdkConfig
 import ai.flowx.external.android.template.app.custom.CustomComponentsProviderImpl
 import android.app.Application
@@ -30,7 +31,10 @@ class TemplateApp : Application() {
             customStepperHeaderProvider = null, // here: link your own implementation of `CustomStepperHeaderProvider` if needed
             analyticsCollector = { event ->
                 // here: link your own implementation of `AnalyticsCollector` if needed
-                Log.i("Analytics", "Event(type = ${event.type}, value = ${event.value})")
+                when (event) {
+                    is Event.Screen -> Log.i("Analytics", "Event.Screen(value = ${event.data.value})")
+                    is Event.Action -> Log.i("Analytics", "Event.Action(value = ${event.data.value}, screen = ${event.data.screen}, component = ${event.data.component}, label = ${event.data.label})")
+                }
             },
             onNewProcessStarted = { processInstanceUuid ->
                 applicationContext.sendBroadcast(
