@@ -8,6 +8,6 @@ object Env {
     const val enginePath = "your_engine_path" // must NOT end with a slash ('/')
 
     // Keycloak data:
-    const val authBaseUrl = "your_authentication_url" // must end with a slash ('/')
+    const val authBaseUrl = "your_authentication_url" // must end with a slash ('/'); should contain the `/protocol/openid-connect/` suffix as path's last segments
     const val clientId = "your_client_id"
 }

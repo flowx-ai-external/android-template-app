@@ -116,7 +116,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // TODO SETUP: configure your maven repository here by setting the appropriate values
+    // TODO SETUP: configure your process here by setting the appropriate values
     companion object {
         const val START_PROCESS_PROJECT_ID = "your_project_id"
         const val START_PROCESS_NAME = "your_process_name"
