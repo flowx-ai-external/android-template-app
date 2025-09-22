@@ -13,8 +13,8 @@ class ProcessViewModel(application: Application) : AndroidViewModel(application)
     private val _uiState = MutableStateFlow(UiState())
     val uiState: StateFlow<UiState> = _uiState.asStateFlow()
 
-    fun updateProcessData(projectId: String?, processName: String?, processUuid: String?) {
-        _uiState.update { currentState -> currentState.copy(projectId = projectId, processName = processName, processUuid = processUuid) }
+    fun updateProcessData(workspaceId: String?, projectId: String?, processName: String?, processUuid: String?) {
+        _uiState.update { currentState -> currentState.copy(workspaceId = workspaceId, projectId = projectId, processName = processName, processUuid = processUuid) }
     }
 
     class Factory(private val application: Application) : ViewModelProvider.Factory {
@@ -28,6 +28,7 @@ class ProcessViewModel(application: Application) : AndroidViewModel(application)
     }
 
     data class UiState(
+        val workspaceId: String? = null,
         val projectId: String? = null,
         val processName: String? = null,
         val processUuid: String? = null,

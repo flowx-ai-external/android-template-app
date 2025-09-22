@@ -1,8 +1,9 @@
 package ai.flowx.external.android.template.app
 
-import ai.flowx.android.sdk.FlowxSdkApi
+import ai.flowx.android.sdk.main.Flowx
 import ai.flowx.external.android.template.app.network.Network
 import ai.flowx.external.android.template.app.storage.SharedPrefsStorage
+import ai.flowx.external.android.template.app.utils.Quadruple
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
@@ -27,7 +28,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)?.let { accessToken ->
             // Set the access token provider which is used to authenticate inside the SDK.
             // This should be called whenever the access token refresh logic imposes it.
-            FlowxSdkApi.getInstance().setAccessTokenProvider(accessTokenProvider = { accessToken })
+            Flowx.getInstance().setAccessToken(accessToken = accessToken)
         }
     }
 
@@ -41,7 +42,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _error = MutableStateFlow("")
     val error = _error.asStateFlow()
 
-    private val _startProcess = Channel<Triple<String, String, String>?>()
+    private val _startProcess = Channel<Quadruple<String, String, String, String>?>()
     val startProcess = _startProcess.receiveAsFlow()
 
     private val _continueProcess = Channel<Pair<String, String>?>()
@@ -58,12 +59,15 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                         storage.putString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF, it.accessToken).also { _ ->
                             // Set the access token provider which is used to authenticate inside the SDK.
                             // This should be called whenever the access token refresh logic imposes it.
-                            FlowxSdkApi.getInstance().setAccessTokenProvider(accessTokenProvider = { it.accessToken })
+                            Flowx.getInstance().setAccessToken(accessToken = it.accessToken)
                         }
                         storage.putString(SharedPrefsStorage.AUTH_REFRESH_TOKEN_PREF, it.refreshToken)
                     }
                 }
-                r.isFailure -> Log.e("Network exception:", r.exceptionOrNull().toString())
+                r.isFailure -> {
+                    Flowx.getInstance().setAccessToken(null)
+                    Log.e("Network exception:", r.exceptionOrNull().toString())
+                }
             }
 
             _error.update { _ -> r.exceptionOrNull()?.toString() ?: "" }
@@ -82,6 +86,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
                 }.exceptionOrNull()?.let {
                     Log.e("Network", it.toString())
                 }
+                Flowx.getInstance().setAccessToken(null) // clear SDK token, no matter what
             }
         }
         storage.clear() // cleanup access data from persistence, no matter what
@@ -90,10 +95,14 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun clearError() { _error.update { _ -> "" } }
 
-    fun startProcess(projectId: String = START_PROCESS_PROJECT_ID, processName: String = START_PROCESS_NAME) {
+    fun startProcess(
+        workspaceId: String = START_PROCESS_WORKSPACE_ID,
+        projectId: String = START_PROCESS_PROJECT_ID,
+        processName: String = START_PROCESS_NAME,
+    ) {
         storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)
             .takeUnless { it.isNullOrBlank() }
-            ?.let { accessToken -> _startProcess.trySend(Triple(projectId, processName, accessToken)) }
+            ?.let { accessToken -> _startProcess.trySend(Quadruple(workspaceId, projectId, processName, accessToken)) }
     }
 
     fun continueProcess(processUuid: String = CONTINUE_PROCESS_UUID) {
@@ -118,6 +127,7 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     // TODO SETUP: configure your process here by setting the appropriate values
     companion object {
+        const val START_PROCESS_WORKSPACE_ID = "your_workspace_id"
         const val START_PROCESS_PROJECT_ID = "your_project_id"
         const val START_PROCESS_NAME = "your_process_name"
         const val CONTINUE_PROCESS_UUID = "your_process_uuid"

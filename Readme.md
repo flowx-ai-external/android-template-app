@@ -39,11 +39,11 @@ The key configuration areas are detailed below:
     Specify the version of the FLOWX.AI Android SDK.
 
     - **File**: `app/build.gradle.kts`
-    - **Action**: Find the line starting with `implementation("ai.flowx.android:android-sdk:` and update the version number if necessary. Example (version `4.0.25`, released on June 4th, 2025).
+    - **Action**: Find the line starting with `implementation("ai.flowx.android:android-sdk:` and update the version number if necessary.
 
     ```kotlin title="app/build.gradle.kts"
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:android-sdk:4.0.25")
+    implementation("ai.flowx.android:sdk:9.0.0")
     ```
 
 3. **Environment configuration**
@@ -69,18 +69,19 @@ The key configuration areas are detailed below:
 
 4. **Theme configuration**
 
-   Specify the theme to be applied during process rendering.
+   Specify the workspace and the theme to be applied during process rendering.
 
    - **File**: `app/src/main/kotlin/ai/flowx/external/android/template/app/screens/StartProcessScreen.kt`
-   - **Action**: Locate the `FlowxSdkApi.getInstance().setupTheme` method call.
+   - **Action**: Locate the `Flowx.getInstance().setupTheme` method call.
 
        - To use a remote theme, set the `themeUuid` parameter to the corresponding UUID string
        - If `themeUuid` is left empty, the SDK will attempt to load a theme from the local `assets` folder specified by `fallbackThemeJsonFileAssetsPath`. Ensure this file (e.g., `theme/some_theme.json`) exists in `app/src/main/assets/` if you intend to use a fallback.
 
     ```kotlin title="app/src/main/kotlin/ai/flowx/external/android/template/app/screens/StartProcessScreen.kt"
-    // TODO SETUP: configure your theme here by adding the `themeUuid` and/or `fallbackThemeJsonFileAssetsPath`
-    FlowxSdkApi.getInstance().setupTheme(
-        themeUuid = "", // when empty, no theme will be downloaded and will fallback to the theme specified in the `fallbackThemeJsonFileAssetsPath` parameter, if any
+    // TODO SETUP: configure your theme here by adding the `workspaceUuid`,  the `themeUuid` and/or `fallbackThemeJsonFileAssetsPath`
+    Flowx.getInstance().setupTheme(
+        workspaceUuid = "your_workspace_id",
+        themeUuid = "your_theme_id", // when empty, no theme will be downloaded and will fallback to the theme specified in the `fallbackThemeJsonFileAssetsPath` parameter, if any
         fallbackThemeJsonFileAssetsPath = "theme/some_theme.json", // when null, no fallback will be used
     ) {
         // ...
@@ -89,7 +90,7 @@ The key configuration areas are detailed below:
 
 5. **Process definition**
 
-   Configure the default project and process identifiers for starting or continuing a process.
+   Configure the default workspace, project and process identifiers for starting or continuing a process.
 
    - **File**: `app/src/main/kotlin/ai/flowx/external/android/template/app/MainViewModel.kt`
    - **Action**: Modify the constants within the companion object.
@@ -100,6 +101,7 @@ The key configuration areas are detailed below:
     ```kotlin title="app/src/main/kotlin/ai/flowx/external/android/template/app/MainViewModel.kt"
     // TODO SETUP: configure your process here by setting the appropriate values
     companion object {
+        const val START_PROCESS_WORKSPACE_ID = "your_workspace_id"
         const val START_PROCESS_PROJECT_ID = "your_project_id"
         const val START_PROCESS_NAME = "your_process_name"
         const val CONTINUE_PROCESS_UUID = "your_process_uuid"
