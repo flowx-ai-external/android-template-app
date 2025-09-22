@@ -9,12 +9,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -42,6 +44,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge()
 
         processActivityLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult(),
@@ -66,9 +69,10 @@ class MainActivity : ComponentActivity() {
                                 //   must be used only inside a container activity.
                                 Intent(context, ProcessActivity::class.java).apply {
                                     // start a new process
-                                    putExtra(ProcessActivity.INTENT_EXTRA_PROJECT_ID, it.first)
-                                    putExtra(ProcessActivity.INTENT_EXTRA_PROCESS_NAME, it.second)
-                                    putExtra(ProcessActivity.INTENT_EXTRA_ACCESS_TOKEN, it.third)
+                                    putExtra(ProcessActivity.INTENT_EXTRA_WORKSPACE_ID, it.first)
+                                    putExtra(ProcessActivity.INTENT_EXTRA_PROJECT_ID, it.second)
+                                    putExtra(ProcessActivity.INTENT_EXTRA_PROCESS_NAME, it.third)
+                                    putExtra(ProcessActivity.INTENT_EXTRA_ACCESS_TOKEN, it.forth)
                                 }
                             )
                         }
@@ -98,7 +102,7 @@ class MainActivity : ComponentActivity() {
             AndroidTemplateAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.safeDrawingPadding(),
                     color = MaterialTheme.colorScheme.background
                 ) {
                     NavHost(

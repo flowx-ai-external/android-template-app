@@ -1,6 +1,6 @@
 package ai.flowx.external.android.template.app.screens
 
-import ai.flowx.android.sdk.FlowxSdkApi
+import ai.flowx.android.sdk.main.Flowx
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,12 +30,13 @@ fun StartProcessScreen(
 ) {
     var startProcessEnabled by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
-        // TODO SETUP: configure your theme here by adding the `themeUuid` and/or `fallbackThemeJsonFileAssetsPath`
-        FlowxSdkApi.getInstance().setupTheme(
-            themeUuid = "", // when empty, no theme will be downloaded
+        // TODO SETUP: configure your theme here by adding  the `workspaceUuid`, the `themeUuid` and/or `fallbackThemeJsonFileAssetsPath`
+        Flowx.getInstance().setupTheme(
+            workspaceUuid = "your_workspace_id",
+            themeUuid = "your_theme_id", // when empty, no theme will be downloaded
             fallbackThemeJsonFileAssetsPath = "theme/some_theme.json", // when null, no fallback will be used
         ) {
-            Log.i(FlowxSdkApi::class.java.simpleName, "Theme setup completed")
+            Log.i(Flowx::class.java.simpleName, "Theme setup completed")
             startProcessEnabled = true
         }
     }
