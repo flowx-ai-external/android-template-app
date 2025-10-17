@@ -83,7 +83,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:sdk:9.0.0")
+    implementation("ai.flowx.android:sdk:9.0.3")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 

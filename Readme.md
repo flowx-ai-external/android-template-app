@@ -43,7 +43,7 @@ The key configuration areas are detailed below:
 
     ```kotlin title="app/build.gradle.kts"
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:sdk:9.0.0")
+    implementation("ai.flowx.android:sdk:9.0.3")
     ```
 
 3. **Environment configuration**
