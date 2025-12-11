@@ -43,7 +43,7 @@ The key configuration areas are detailed below:
 
     ```kotlin title="app/build.gradle.kts"
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:sdk:9.0.3")
+    implementation("ai.flowx.android:sdk:9.0.6")
     ```
 
 3. **Environment configuration**
@@ -57,12 +57,12 @@ The key configuration areas are detailed below:
     // TODO SETUP: configure your environment here by setting the appropriate values
     object Env {
         // Platform data:
-        const val baseUrl = "your_base_url" // must NOT end with a slash ('/')
-        const val imageBaseUrl = "your_image_base_url" // must NOT end with a slash ('/')
-        const val enginePath = "your_engine_path" // must NOT end with a slash ('/')
+        const val baseUrl = "your_base_url"
+        const val imageBaseUrl = "your_image_base_url"
+        const val enginePath = "your_engine_path"
     
         // Keycloak data:
-        const val authBaseUrl = "your_authentication_url" // must end with a slash ('/'); should contain the `/protocol/openid-connect/` suffix as path's last segments
+        const val authBaseUrl = "your_authentication_url" // should contain the `/protocol/openid-connect` suffix as path's last segments
         const val clientId = "your_client_id"
     }
     ```

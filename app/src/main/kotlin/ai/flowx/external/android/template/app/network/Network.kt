@@ -9,7 +9,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object Network {
     private val authRetrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(Env.authBaseUrl)
+            .baseUrl(Env.authBaseUrl.trimEnd('/').plus('/'))
             .client(OkHttpClient.Builder()
                 .addInterceptor(HttpLoggingInterceptor().apply {
                     level = HttpLoggingInterceptor.Level.BODY
