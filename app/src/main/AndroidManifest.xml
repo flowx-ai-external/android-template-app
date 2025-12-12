@@ -25,6 +25,7 @@
             </intent-filter>
         </activity>
         <activity android:name="ai.flowx.external.android.template.app.ProcessActivity" android:exported="false" />
+        <activity android:name="ai.flowx.external.android.template.app.UiFlowActivity" android:exported="false" />
     </application>
 
 </manifest>

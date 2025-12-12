@@ -46,15 +46,6 @@ class ProcessActivity : ComponentActivity() {
         val processUuid = intent.getSerializableExtra(INTENT_EXTRA_PROCESS_UUID) as? String // used to continue an existing process
         val accessToken = intent.getSerializableExtra(INTENT_EXTRA_ACCESS_TOKEN) as String
 
-//        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-//            Flowx.getInstance().checkRendererCompatibility {
-//                when (it) {
-//                    true -> Log.i(FlowxSdkApi::class.java.simpleName, "FlowX SDK Renderer is compatible with deployed platform.")
-//                    false -> Log.e(FlowxSdkApi::class.java.simpleName, "FlowX SDK Renderer is NOT compatible with deployed platform.")
-//                }
-//            }
-//        }
-
         // Set the access token provider which is used to authenticate inside the SDK.
         // This should be called whenever the access token refresh logic imposes it.
         Flowx.getInstance().setAccessToken(accessToken = accessToken)
@@ -168,7 +159,6 @@ class ProcessActivity : ComponentActivity() {
         const val INTENT_EXTRA_PROCESS_NAME = "INTENT_EXTRA_PROCESS_NAME"
         const val INTENT_EXTRA_PROCESS_UUID = "INTENT_EXTRA_PROCESS_UUID"
         const val INTENT_EXTRA_ACCESS_TOKEN = "INTENT_EXTRA_ACCESS_TOKEN"
-        const val RESULT_CODE_RESTART_CONTINUE_PROCESS = 200
     }
 }
 

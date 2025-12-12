@@ -37,12 +37,26 @@ import kotlinx.coroutines.flow.stateIn
 import org.json.JSONObject
 
 class CustomLoadersProviderImpl : CustomLoaderProvider {
-    override fun provideCustomLoader(actionName: String?): CustomLoader? =
-        when (actionName) {
-            "startProcess" -> MyCustomLoader(backgroundColor = Color.Black.copy(alpha = 0.38f), indicatorColor = Color.Red)
-            "reloadProcess" -> MyCustomLoader(backgroundColor = Color.Yellow.copy(alpha = 0.38f), indicatorColor = Color.Green)
-            "saveData" -> MyCustomLoader(backgroundColor = Color.Cyan.copy(alpha = 0.38f), indicatorColor = Color.Magenta)
-            "action2" -> ComplexCustomLoader()
+    override fun provideCustomLoader(loaderType: CustomLoaderProvider.LoaderType?): CustomLoader? =
+        when (loaderType) {
+            is CustomLoaderProvider.LoaderType.StartProcess -> MyCustomLoader(backgroundColor = Color.Black.copy(alpha = 0.38f), indicatorColor = Color.Red)
+            is CustomLoaderProvider.LoaderType.ReloadProcess -> MyCustomLoader(backgroundColor = Color.Yellow.copy(alpha = 0.38f), indicatorColor = Color.Green)
+            is CustomLoaderProvider.LoaderType.Action -> {
+                when (loaderType.name) {
+                    "saveData" -> MyCustomLoader(backgroundColor = Color.Cyan.copy(alpha = 0.38f), indicatorColor = Color.Magenta)
+                    "action2" -> ComplexCustomLoader()
+                    else -> null
+                }
+            }
+
+            is CustomLoaderProvider.LoaderType.Upload -> {
+                when (loaderType.name) {
+                    "upload1" -> ActionCustomLoader()
+                    "upload2" -> ComplexCustomLoader()
+                    else -> null
+                }
+            }
+
             else -> null
         }
 }
@@ -71,6 +85,21 @@ private class ComplexCustomLoader() : CustomLoader {
                     key = AnimatedLoaderViewModel::class.java.simpleName
                 )
             )
+        }
+}
+
+class ActionCustomLoader : CustomLoader {
+    override val composable: @Composable (CustomLoaderScope.() -> Unit)
+        get() = @Composable {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(color = Color.Green),
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator(color = Color.Black)
+                BackHandler(enabled = true) {} // block back navigation
+            }
         }
 }
 

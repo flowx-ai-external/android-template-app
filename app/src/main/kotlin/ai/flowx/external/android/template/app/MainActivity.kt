@@ -1,8 +1,8 @@
 package ai.flowx.external.android.template.app
 
 import ai.flowx.external.android.template.app.extensions.collectAsEffectWithLifecycle
+import ai.flowx.external.android.template.app.screens.DashboardScreen
 import ai.flowx.external.android.template.app.screens.LoginScreen
-import ai.flowx.external.android.template.app.screens.StartProcessScreen
 import ai.flowx.external.android.template.app.ui.theme.AndroidTemplateAppTheme
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +10,6 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -28,11 +27,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
@@ -41,15 +35,14 @@ class MainActivity : ComponentActivity() {
     )
 
     private lateinit var processActivityLauncher: ActivityResultLauncher<Intent>
+    private lateinit var uiFlowActivityLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        processActivityLauncher = registerForActivityResult(
-            ActivityResultContracts.StartActivityForResult(),
-            this::onActivityResult
-        )
+        processActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
+        uiFlowActivityLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {}
 
         setContent {
             val context = LocalContext.current
@@ -99,6 +92,27 @@ class MainActivity : ComponentActivity() {
                 }
             )
 
+            vm.startUiFlow.collectAsEffectWithLifecycle(
+                block = {
+                    it?.let {
+                        if (this::uiFlowActivityLauncher.isInitialized) {
+                            uiFlowActivityLauncher.launch(
+                                // This activity belongs to the container app.
+                                // The SDK will return only a @Composable function, which, for now,
+                                //   must be used only inside a container activity.
+                                Intent(context, UiFlowActivity::class.java).apply {
+                                    // start a new ui flow
+                                    putExtra(UiFlowActivity.INTENT_EXTRA_WORKSPACE_ID, it.first)
+                                    putExtra(UiFlowActivity.INTENT_EXTRA_PROJECT_ID, it.second)
+                                    putExtra(UiFlowActivity.INTENT_EXTRA_UI_FLOW_NAME, it.third)
+                                    putExtra(UiFlowActivity.INTENT_EXTRA_ACCESS_TOKEN, it.forth)
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+
             AndroidTemplateAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -115,10 +129,11 @@ class MainActivity : ComponentActivity() {
                                 login = { email, password -> vm.login(email, password) }
                             )
                         }
-                        composable("start-process") {
-                            StartProcessScreen(
+                        composable("dashboard") {
+                            DashboardScreen(
                                 startProcess = { vm.startProcess() },
                                 continueProcess = { vm.continueProcess() },
+                                startUiFlow = { vm.startUiFlow() },
                                 logout = { vm.logout() }
                             )
                         }
@@ -133,8 +148,8 @@ class MainActivity : ComponentActivity() {
                                 CircularProgressIndicator()
                             }
                         }
-                        uiState.value.loggedIn -> navController.currentBackStackEntry?.destination?.route?.takeUnless { it == "start-process" }?.let {
-                            navController.navigate("start-process") {
+                        uiState.value.loggedIn -> navController.currentBackStackEntry?.destination?.route?.takeUnless { it == "dashboard" }?.let {
+                            navController.navigate("dashboard") {
                                 popUpTo("login") {
                                     inclusive = true
                                 }
@@ -142,7 +157,7 @@ class MainActivity : ComponentActivity() {
                         }
                         !uiState.value.loggedIn -> navController.currentBackStackEntry?.destination?.route?.takeUnless { it == "login" }?.let {
                             navController.navigate("login") {
-                                popUpTo("start-process") {
+                                popUpTo("dashboard") {
                                     inclusive = true
                                 }
                             }
@@ -157,23 +172,6 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-    private fun onActivityResult(result: ActivityResult) {
-        when (result.resultCode) {
-            ProcessActivity.RESULT_CODE_RESTART_CONTINUE_PROCESS -> {
-                result.data?.extras?.getString(ProcessActivity.INTENT_EXTRA_PROCESS_UUID).takeUnless { it.isNullOrBlank() }?.let {
-                    CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
-                        vm.showLoader(true) // show loader while waiting for the activity to be destroyed
-                        delay(1000L) // delay to make sure the activity has been destroyed (i.e. its `onDestroy()` has been called) // NOTE: this is VERY IMPORTANT
-                        vm.showLoader(false)
-
-                        vm.continueProcess(processUuid = it)
-                    }
-                }
-            }
-            else -> {}
         }
     }
 }

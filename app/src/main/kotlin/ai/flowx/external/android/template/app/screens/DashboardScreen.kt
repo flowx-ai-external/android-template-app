@@ -23,9 +23,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun StartProcessScreen(
+fun DashboardScreen(
     startProcess: () -> Unit,
     continueProcess: () -> Unit,
+    startUiFlow: () -> Unit,
     logout: () -> Unit
 ) {
     var startProcessEnabled by remember { mutableStateOf(false) }
@@ -69,6 +70,15 @@ fun StartProcessScreen(
                 onClick = { continueProcess.invoke() }
             ) {
                 Text("Continue process")
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(52.dp),
+                onClick = { startUiFlow.invoke() }
+            ) {
+                Text("Start UI Flow")
             }
             Spacer(modifier = Modifier.weight(1f))
             TextButton(

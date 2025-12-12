@@ -48,6 +48,9 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     private val _continueProcess = Channel<Pair<String, String>?>()
     val continueProcess = _continueProcess.receiveAsFlow()
 
+    private val _startUiFlow = Channel<Quadruple<String, String, String, String>?>()
+    val startUiFlow = _startUiFlow.receiveAsFlow()
+
     fun login(email: String, password: String) {
         _uiState.update { currentState -> currentState.copy(loading = true) }
         viewModelScope.launch {
@@ -96,8 +99,8 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
     fun clearError() { _error.update { _ -> "" } }
 
     fun startProcess(
-        workspaceId: String = START_PROCESS_WORKSPACE_ID,
-        projectId: String = START_PROCESS_PROJECT_ID,
+        workspaceId: String = WORKSPACE_ID,
+        projectId: String = PROJECT_ID,
         processName: String = START_PROCESS_NAME,
     ) {
         storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)
@@ -109,6 +112,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)
             .takeUnless { it.isNullOrBlank() }
             ?.let { accessToken -> _continueProcess.trySend(processUuid to accessToken) }
+    }
+
+    fun startUiFlow(
+        workspaceId: String = WORKSPACE_ID,
+        projectId: String = PROJECT_ID,
+        uiFlowName: String = START_UI_FLOW_NAME,
+    ) {
+        storage.getString(SharedPrefsStorage.AUTH_ACCESS_TOKEN_PREF)
+            .takeUnless { it.isNullOrBlank() }
+            ?.let { accessToken -> _startUiFlow.trySend(Quadruple(workspaceId, projectId, uiFlowName, accessToken)) }
     }
 
     fun showLoader(show: Boolean) {
@@ -125,12 +138,13 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    // TODO SETUP: configure your process here by setting the appropriate values
+    // TODO SETUP: configure your process / ui flow here by setting the appropriate values
     companion object {
-        const val START_PROCESS_WORKSPACE_ID = "your_workspace_id"
-        const val START_PROCESS_PROJECT_ID = "your_project_id"
+        const val WORKSPACE_ID = "your_workspace_id"
+        const val PROJECT_ID = "your_project_id"
         const val START_PROCESS_NAME = "your_process_name"
         const val CONTINUE_PROCESS_UUID = "your_process_uuid"
+        const val START_UI_FLOW_NAME = "your_ui_flow_name"
     }
 }
 

@@ -10,6 +10,7 @@ Ensure you have the following:
 - Keycloak Client ID
 - The UUID of the theme to be applied (optional)
 - Project and Process identifiers for starting or continuing a process
+- Project and UI Flow identifiers for starting an UI Flow
 
 ### Configuration Steps
 
@@ -43,7 +44,7 @@ The key configuration areas are detailed below:
 
     ```kotlin title="app/build.gradle.kts"
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:sdk:9.0.6")
+    implementation("ai.flowx.android:sdk:10.3.0")
     ```
 
 3. **Environment configuration**
@@ -69,15 +70,15 @@ The key configuration areas are detailed below:
 
 4. **Theme configuration**
 
-   Specify the workspace and the theme to be applied during process rendering.
+   Specify the workspace and the theme to be applied during process / ui flow rendering.
 
-   - **File**: `app/src/main/kotlin/ai/flowx/external/android/template/app/screens/StartProcessScreen.kt`
+   - **File**: `app/src/main/kotlin/ai/flowx/external/android/template/app/screens/DashboardScreen.kt`
    - **Action**: Locate the `Flowx.getInstance().setupTheme` method call.
 
        - To use a remote theme, set the `themeUuid` parameter to the corresponding UUID string
        - If `themeUuid` is left empty, the SDK will attempt to load a theme from the local `assets` folder specified by `fallbackThemeJsonFileAssetsPath`. Ensure this file (e.g., `theme/some_theme.json`) exists in `app/src/main/assets/` if you intend to use a fallback.
 
-    ```kotlin title="app/src/main/kotlin/ai/flowx/external/android/template/app/screens/StartProcessScreen.kt"
+    ```kotlin title="app/src/main/kotlin/ai/flowx/external/android/template/app/screens/DashboardScreen.kt"
     // TODO SETUP: configure your theme here by adding the `workspaceUuid`,  the `themeUuid` and/or `fallbackThemeJsonFileAssetsPath`
     Flowx.getInstance().setupTheme(
         workspaceUuid = "your_workspace_id",
@@ -88,22 +89,26 @@ The key configuration areas are detailed below:
     }
     ```
 
-5. **Process definition**
+5. **Process / UI Flow definition**
 
-   Configure the default workspace, project and process identifiers for starting or continuing a process.
+   Configure the default workspace, project and:
+     - process identifiers for starting or continuing a process
+     - ui flow identifier for starting an ui flow
 
    - **File**: `app/src/main/kotlin/ai/flowx/external/android/template/app/MainViewModel.kt`
    - **Action**: Modify the constants within the companion object.
    
-       - To start a new process: Provide valid values for `START_PROCESS_PROJECT_ID` and `START_PROCESS_NAME`
+       - To start a new process: Provide valid values for `PROJECT_ID` and `START_PROCESS_NAME`
        - To continue an existing process: Provide the UUID of an active process instance for `CONTINUE_PROCESS_UUID`
+       - To start a new ui flow: Provide valid values for `PROJECT_ID` and `START_UI_FLOW_NAME`
 
     ```kotlin title="app/src/main/kotlin/ai/flowx/external/android/template/app/MainViewModel.kt"
-    // TODO SETUP: configure your process here by setting the appropriate values
+    // TODO SETUP: configure your process / ui flow here by setting the appropriate values
     companion object {
-        const val START_PROCESS_WORKSPACE_ID = "your_workspace_id"
-        const val START_PROCESS_PROJECT_ID = "your_project_id"
+        const val WORKSPACE_ID = "your_workspace_id"
+        const val PROJECT_ID = "your_project_id"
         const val START_PROCESS_NAME = "your_process_name"
         const val CONTINUE_PROCESS_UUID = "your_process_uuid"
+        const val START_UI_FLOW_NAME = "your_ui_flow_name"
     }
     ```
