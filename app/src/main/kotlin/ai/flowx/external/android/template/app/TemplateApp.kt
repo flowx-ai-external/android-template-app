@@ -25,6 +25,7 @@ class TemplateApp : Application(), FlowxOwner {
         Flowx.getInstance().init(
             context = applicationContext,
             config = object : Config {
+                override val organizationId = "your-organization-id"
                 override val baseUrl = Env.baseUrl
                 override val imageBaseUrl = Env.imageBaseUrl
                 override val enginePath = Env.enginePath

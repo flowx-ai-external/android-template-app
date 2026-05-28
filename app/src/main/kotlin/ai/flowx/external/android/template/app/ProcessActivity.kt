@@ -72,6 +72,9 @@ class ProcessActivity : ComponentActivity() {
             Box(modifier = Modifier.safeDrawingPadding()) {
                 ProcessContent(
                     uiState = uiState,
+                    onProcessStarted = {
+                        Log.i(ProcessActivity::javaClass.name, "Process $it has started")
+                    },
                     onProcessEnded = {
                         Log.i(
                             ProcessActivity::javaClass.name,
@@ -95,6 +98,7 @@ class ProcessActivity : ComponentActivity() {
     @Composable
     private fun ProcessContent(
         uiState: ProcessViewModel.UiState,
+        onProcessStarted: ((String) -> Unit)? = null,
         onProcessEnded: (() -> Unit)? = null,
         onCloseProcessModalFunc: (CloseModalProcessScope.(processName: String) -> Unit)? = null,
     ) {
@@ -105,7 +109,8 @@ class ProcessActivity : ComponentActivity() {
                     projectId = uiState.projectId,
                     processName = uiState.processName,
                     isModal = true,
-                    onProcessEnded = { onProcessEnded?.invoke() },
+                    onProcessStarted = onProcessStarted?.let { fn -> { fn.invoke(it) } },
+                    onProcessEnded = onProcessEnded?.let { fn -> { fn.invoke() } },
                     closeModalFunc = { processName -> onCloseProcessModalFunc?.invoke(this, processName) },
                 ).invoke()
             }
