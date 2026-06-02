@@ -53,6 +53,8 @@ android {
     }
 }
 
+val flowxSdkVersion: String = "<FLOWX-SDK-VERSION>" // TODO SETUP: configure the SDK version. Note: use a FLOWX platform compatible version of the SDK
+
 dependencies {
 
     implementation("androidx.core:core-ktx:1.16.0")
@@ -83,7 +85,7 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
 
     // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:sdk:10.4.0")
+    implementation("ai.flowx.android:sdk:$flowxSdkVersion")
 
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
