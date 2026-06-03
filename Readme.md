@@ -6,6 +6,7 @@ This document outlines the necessary steps to configure the project to connect t
 
 Ensure you have the following:
 - Maven repository credentials (username and password)
+- Organization ID
 - Environment-specific URLs (Base URL, Image Base URL, Engine Path, Authentication URL)
 - Keycloak Client ID
 - The UUID of the theme to be applied (optional)
@@ -40,14 +41,33 @@ The key configuration areas are detailed below:
     Specify the version of the FLOWX.AI Android SDK.
 
     - **File**: `app/build.gradle.kts`
-    - **Action**: Find the line starting with `implementation("ai.flowx.android:android-sdk:` and update the version number if necessary.
+    - **Action**: Find the line starting with `val flowxSdkVersion: String = "<FLOWX-SDK-VERSION>"` and update the version number as necessary.
 
     ```kotlin title="app/build.gradle.kts"
-    // TODO SETUP: configure your integration by setting the appropriate version of the SDK
-    implementation("ai.flowx.android:sdk:10.3.0")
+    val flowxSdkVersion: String = "<FLOWX-SDK-VERSION>" // TODO SETUP: configure the SDK version. Note: use a FLOWX platform compatible version of the SDK
+    dependencies {
+        // TODO SETUP: configure your integration by setting the appropriate version of the SDK
+        implementation("ai.flowx.android:sdk:$flowxSdkVersion")
+    }
     ```
 
-3. **Environment configuration**
+3. **SDK configuration**
+
+   Specify the organization id.
+   
+   - **File**: `app/src/main/kotlin/ai/flowx/external/android/template/app/TemplateApp.kt`
+   - **Action**: Find the line starting with `override val organizationId = "your-organization-id"` and set the organization id
+
+   ```kotlin title="app/src/main/kotlin/ai/flowx/external/android/template/app/TemplateApp.kt"
+   Flowx.getInstance().init(
+       config = object : Config {
+           override val organizationId = "your-organization-id" // TODO SETUP: configure your organization
+           // ...
+       }
+   )
+   ```
+
+4. **Environment configuration**
 
    Define the connection parameters for your specific FLOWX.AI environment.
 
@@ -68,7 +88,7 @@ The key configuration areas are detailed below:
     }
     ```
 
-4. **Theme configuration**
+5. **Theme configuration**
 
    Specify the workspace and the theme to be applied during process / ui flow rendering.
 
@@ -89,7 +109,7 @@ The key configuration areas are detailed below:
     }
     ```
 
-5. **Process / UI Flow definition**
+6. **Process / UI Flow definition**
 
    Configure the default workspace, project and:
      - process identifiers for starting or continuing a process
