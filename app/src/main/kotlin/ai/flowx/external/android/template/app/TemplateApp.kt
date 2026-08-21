@@ -37,6 +37,9 @@ class TemplateApp : Application(), FlowxOwner {
             customComponentsProvider = CustomComponentsProviderImpl(),
 //            customStepperHeaderProvider = CustomStepperHeaderProviderImpl(), // here: link your own implementation of `CustomStepperHeaderProvider` if needed
 //            customLoaderProvider = CustomLoadersProviderImpl(), // here: link your own implementation of `CustomLoaderProvider` if needed
+            logSink = { event ->
+                Log.i("FxLogSink", event.toString())
+            },
             analyticsCollector = { event ->
                 // here: link your own implementation of `AnalyticsCollector` if needed
                 when (event) {
